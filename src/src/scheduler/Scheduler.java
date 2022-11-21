@@ -93,6 +93,7 @@ public class Scheduler {
     }
 
     private static void createPatient(String[] tokens) {
+        // create_patient <username> <password>
         // TODO: Part 1
     }
 
