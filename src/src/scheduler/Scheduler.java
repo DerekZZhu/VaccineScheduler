@@ -151,6 +151,14 @@ public class Scheduler {
             System.out.println("Username taken, try again!");
             return;
         }
+
+        // Check 3: Check if password fits requirements
+        String[] pwhead = checkPWD(password, checks, patterns);
+        if (pwhead[0].equals("f")) {
+            System.out.println("Password did not fit requirements. Try Again!");
+            System.out.println(pwhead[1]);
+            return;
+        }
         byte[] salt = Util.generateSalt();
         byte[] hash = Util.generateHash(password, salt);
         // create the caregiver
