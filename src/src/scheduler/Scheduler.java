@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 public class Scheduler {
 
     // objects to keep track of the currently logged-in user
@@ -22,6 +24,13 @@ public class Scheduler {
     //       since only one user can be logged-in at a time
     private static Caregiver currentCaregiver = null;
     private static Patient currentPatient = null;
+
+    private static String[] checks = {"Password is at least 8 characters: ",
+            "Password contains both uppercase and lowercase letters: ",
+            "Password contains a mixture of letters and numbers: ",
+            "Password includes at least one special character, from “!”, “@”, “#”, “?”: "};
+
+    private static String[] patterns = {".{8,}", "\\b(?![a-z]+\\b|[A-Z]+\\b)[a-zA-Z]+", "[0-9]+", "[!@#$?]+"};
 
     public static void main(String[] args) {
         // printing greetings text
@@ -107,12 +116,21 @@ public class Scheduler {
             System.out.println("Username taken, try again!");
             return;
         }
+
+        // Check 3: Check if password fits requirements
+        String[] pwhead = checkPWD(password, checks, patterns);
+        if (pwhead[0].equals("f")) {
+            System.out.println("Password did not fit requirements. Try Again!");
+            System.out.println(pwhead[1]);
+            return;
+        }
+
         byte[] salt = Util.generateSalt();
         byte[] hash = Util.generateHash(password, salt);
         try {
             currentPatient = new Patient.PatientBuilder(username, salt, hash).build();
             currentPatient.saveToDB();
-            System.out.println("Created Patient User: " + username);
+            System.out.println("Created user " + username);
         } catch (SQLException e) {
             System.out.println("Failed to create user.");
             e.printStackTrace();
@@ -336,5 +354,24 @@ public class Scheduler {
 
     private static void logout(String[] tokens) {
         // TODO: Part 2
+    }
+
+    private static String[] checkPWD(String password, String[] checks, String[] patterns) {
+        Pattern pattern;
+        String response = "";
+        String[] header = new String[2];
+        header[0] = "t";
+        for (int i = 0; i < checks.length; i++) {
+            response += checks[i];
+            pattern = Pattern.compile(patterns[i]);
+            if (pattern.matcher(password).find()) {
+                response += "✔\n";
+            } else {
+                response += "❌\n";
+                header[0] = "f";
+            }
+        }
+        header[1] = response.trim();
+        return header;
     }
 }
