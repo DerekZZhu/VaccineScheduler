@@ -71,6 +71,25 @@ public class Caregiver {
         }
     }
 
+    public void obtainSchedule(Date d) throws SQLException {
+        ConnectionManager cm = new ConnectionManager();
+        Connection con = cm.createConnection();
+
+        String getSchedule = "SELECT A.Username FROM Availabilities AS A WHERE Time = ?";
+        try {
+            PreparedStatement statement = con.prepareStatement(getSchedule);
+            statement.setDate(1, d);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                System.out.println(rs.getString("Username"));
+            }
+        } catch (SQLException e) {
+            throw new SQLException();
+        } finally {
+            cm.closeConnection();
+        }
+    }
+
     public static class CaregiverBuilder {
         private final String username;
         private final byte[] salt;

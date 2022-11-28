@@ -153,12 +153,13 @@ public class Scheduler {
         }
 
         // Check 3: Check if password fits requirements
-        String[] pwhead = checkPWD(password, checks, patterns);
-        if (pwhead[0].equals("f")) {
-            System.out.println("Password did not fit requirements. Try Again!");
-            System.out.println(pwhead[1]);
-            return;
-        }
+//        String[] pwhead = checkPWD(password, checks, patterns);
+//        if (pwhead[0].equals("f")) {
+//            System.out.println("Password did not fit requirements. Try Again!");
+//            System.out.println(pwhead[1]);
+//            return;
+//        }
+
         byte[] salt = Util.generateSalt();
         byte[] hash = Util.generateHash(password, salt);
         // create the caregiver
@@ -277,7 +278,26 @@ public class Scheduler {
     }
 
     private static void searchCaregiverSchedule(String[] tokens) {
-        // TODO: Part 2
+        if (currentCaregiver == null && currentPatient == null) {
+            System.out.println("Please login first!");
+            return;
+        }
+
+        if (tokens.length != 2) {
+            System.out.println("Please try again!");
+            return;
+        }
+
+        String date = tokens[1];
+        try {
+            Date d = Date.valueOf(date);
+            currentCaregiver.obtainSchedule(d);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Please enter a valid date!");
+        } catch (SQLException e) {
+            System.out.println("Error occurred when uploading availability");
+            e.printStackTrace();
+        }
     }
 
     private static void reserve(String[] tokens) {
@@ -361,7 +381,10 @@ public class Scheduler {
     }
 
     private static void logout(String[] tokens) {
-        // TODO: Part 2
+        currentCaregiver = null;
+        currentPatient = null;
+        System.out.println("Successfully Logged out");
+        return;
     }
 
     private static String[] checkPWD(String password, String[] checks, String[] patterns) {
