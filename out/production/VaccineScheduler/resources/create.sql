@@ -25,10 +25,10 @@ CREATE TABLE Patients (
 );
 
 CREATE TABLE Appointments (
-    id int,
+    ID int,
     Time date,
     Vaccine_Name varchar(255) REFERENCES Vaccines,
     Caregiver_Name varchar(255) REFERENCES Caregivers,
     Patient_Name varchar(255) REFERENCES Patients,
-    PRIMARY KEY (id)
+    PRIMARY KEY (ID)
 );
