@@ -117,13 +117,13 @@ public class Scheduler {
             return;
         }
 
-        // Check 3: Check if password fits requirements
-//        String[] pwhead = checkPWD(password, checks, patterns);
-//        if (pwhead[0].equals("f")) {
-//            System.out.println("Password did not fit requirements. Try Again!");
-//            System.out.println(pwhead[1]);
-//            return;
-//        }
+        //Check 3: Check if password fits requirements
+        String[] pwhead = checkPWD(password, checks, patterns);
+        if (pwhead[0].equals("f")) {
+            System.out.println("Password did not fit requirements. Try Again!");
+            System.out.println(pwhead[1]);
+            return;
+        }
 
         byte[] salt = Util.generateSalt();
         byte[] hash = Util.generateHash(password, salt);
@@ -296,7 +296,7 @@ public class Scheduler {
             System.out.println("Please enter a valid date!");
         } catch (SQLException e) {
             System.out.println("Error occurred when uploading availability");
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -318,10 +318,10 @@ public class Scheduler {
             Date d = Date.valueOf(date);
             reserveAppointment(d, vaccine);
         } catch (IllegalArgumentException e) {
-            System.out.println("Something broke.");
+            System.out.println("Please try again!");
         } catch (SQLException e) {
-            System.out.println("Error occurred when reserving appointment");
             e.printStackTrace();
+            System.out.println("Error occurred when reserving appointment. Please try again!");
         }
 
     }
@@ -346,8 +346,8 @@ public class Scheduler {
         } catch (IllegalArgumentException e) {
             System.out.println("Please enter a valid date!");
         } catch (SQLException e) {
-            System.out.println("Error occurred when uploading availability");
-            e.printStackTrace();
+            e.printStackTrace(System.out);
+            System.out.println("Please try again!");
         }
     }
 
@@ -413,8 +413,8 @@ public class Scheduler {
         } catch (IllegalArgumentException e) {
             System.out.println("Please enter a valid date!");
         } catch (SQLException e) {
-            System.out.println("Error occurred when uploading availability");
-            e.printStackTrace();
+            e.printStackTrace(System.out);
+            System.out.println("Please try again!");
         }
     }
 
@@ -503,7 +503,9 @@ public class Scheduler {
             statement.executeUpdate();
             System.out.println("Appointment ID: " + ID + " Caregiver Username: " + caregiver);
         }  catch (SQLException e) {
-            throw new SQLException();
+            System.out.print("Please try again!");
+            e.printStackTrace();
+            //throw new SQLException();
         } finally {
             cm.closeConnection();
         }
@@ -530,7 +532,8 @@ public class Scheduler {
                                    rs.getString("Patient_Name"));
             }
         } catch (SQLException e) {
-            throw new SQLException();
+            e.printStackTrace(System.out);
+            System.out.println("Please try again!");
         } finally {
             cm.closeConnection();
         }
@@ -557,7 +560,8 @@ public class Scheduler {
                         rs.getString("Caregiver_Name"));
             }
         } catch (SQLException e) {
-            throw new SQLException();
+            e.printStackTrace(System.out);
+            System.out.println("Please try again!");
         } finally {
             cm.closeConnection();
         }
